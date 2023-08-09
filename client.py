@@ -1,7 +1,12 @@
 import socket
+import sys
 
 def main():
-    server_ip = '127.0.0.1'  # Replace with the server's IP address
+    if len(sys.argv) != 2:
+        print("Usage: python client.py <server_ip>")
+        return
+
+    server_ip = sys.argv[1]
     server_port = 12345      # Replace with the server's port number
 
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
