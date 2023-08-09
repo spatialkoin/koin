@@ -10,11 +10,15 @@ def main():
         client_socket.connect((server_ip, server_port))
         print(f"Connected to {server_ip}:{server_port}")
 
-        message = "Hello, server!"
-        client_socket.send(message.encode('utf-8'))
+        while True:
+            user_input = input("Enter a message to send to the server (type 'exit' to quit): ")
+            if user_input.lower() == 'exit':
+                break
 
-        response = client_socket.recv(1024)
-        print("Server response:", response.decode('utf-8'))
+            client_socket.send(user_input.encode('utf-8'))
+
+            response = client_socket.recv(1024)
+            print("Server response:", response.decode('utf-8'))
 
     except Exception as e:
         print("Error:", e)
