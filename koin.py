@@ -11,42 +11,38 @@ import requests
 server_socket = None
 upnp = None
 
+register = "../register/"
+files = "../files/"
 MAX_FILE_SIZE = 1024 * 1024  # 1 MB
 BUFFER_SIZE = min(8192, MAX_FILE_SIZE)
 
-
-register = "../register/"
-files = "../files/"
-
 def handle_client(client_socket):
-    # ... (rest of the function remains the same)
-    # Adjust the chunk size for receiving files
-    chunk_size = min(BUFFER_SIZE, MAX_FILE_SIZE)
     while True:
         try:
-            data = client_socket.recv(chunk_size)  # Receive a chunk of data
+            chunk_size = min(BUFFER_SIZE, MAX_FILE_SIZE)
+            data = client_socket.recv(chunk_size)
             if not data:
-                break  # Break the loop if no more data is received
+                break
             decoded_data = data.decode('utf-8')
+            print("Received:", decoded_data)
 
-            # ... (rest of the function remains the same)
-            # Handle the file content received in chunks
+            command, *rest = decoded_data.split(maxsplit=1)
+            client_ip = client_socket.getpeername()[0]
+            ip_filename = os.path.join(register, f"{client_ip}.ip")
+            with open(ip_filename, 'w') as ip_file:
+                ip_file.write(client_ip)
+
             if command == "GET":
                 file_name = files + rest[0]
                 if os.path.exists(file_name):
-                    with open(file_name, 'rb') as file:
-                        file_content = file.read(MAX_FILE_SIZE)
-                        while file_content:
-                            client_socket.send(file_content)
-                            file_content = file.read(MAX_FILE_SIZE)
+                    with open(file_name, 'r') as file:
+                        file_content = file.read()
+                        response = "File content:\n" + file_content
                 else:
                     response = "File not found"
-
             elif command == "LIST":
-                print("Received API:", command)
                 file_list = "\n".join(os.listdir(files))
                 response = "File list:\n" + file_list
-                print(response)
             else:
 
                 file_hash = hashlib.sha256(decoded_data.encode('utf-8')).hexdigest()
@@ -57,13 +53,11 @@ def handle_client(client_socket):
                 response = f"Data saved to file with hash as name: {file_name}, IP address registered."
 
             client_socket.send(response.encode('utf-8'))
-            print("FIRST MESSAGE SENT")
-            client_socket.send(b'\n')
         except Exception as e:
             print("Error:", e)
             break
-
     client_socket.close()
+
 
 def cleanup_and_exit(signum, frame):
     global server_socket, upnp
@@ -85,7 +79,7 @@ def cleanup_and_exit(signum, frame):
 def register_thread():
     while True:
         try:
-            time.sleep(5)  # Wait for 60 seconds before checking again
+            time.sleep(60)  # Wait for 60 seconds before checking again
             for ip_filename in os.listdir(register):
                 with open(os.path.join(register, ip_filename), 'r') as ip_file:
                     target_ip = ip_file.read().strip()
@@ -104,19 +98,9 @@ def register_thread():
                             print(f"Connected to {server_ip}:{server_port}")
                             user_input = "LIST"
                             client_socket.send(user_input.encode('utf-8'))
-                            client_socket.send(b'\n')
-
-                            response = b''  # Initialize an empty byte string to hold the received data
-
-                            while True:
-                                chunk = client_socket.recv(BUFFER_SIZE)  # Receive a chunk of data
-                                if b'\n' in chunk:
-                                    break
-                                if not chunk:
-                                    break  # Break the loop if no more data is received
-                                response += chunk  # Append the received chunk to the data
-
-                            print("Server response---:", response.decode('utf-8'))
+                            chunk_size = min(BUFFER_SIZE, MAX_FILE_SIZE)
+                            response = client_socket.recv(chunk_size)
+                            print("Server response:", response.decode('utf-8'))
                             response_text = response.decode('utf-8')
                             lines = response_text.split('\n')
 
@@ -126,17 +110,9 @@ def register_thread():
                                 print("GET "+ txt_line)
                                 commnd_file = "GET "+ txt_line
                                 client_socket.send(commnd_file.encode('utf-8'))
-                                client_socket.send(b'\n')
-                                response = b''  # Initialize an empty byte string to hold the received data
 
-                                while True:
-                                    chunk = client_socket.recv(BUFFER_SIZE)  # Receive a chunk of data
-                                    if b'\n' in chunk:
-                                        break
-                                    if not chunk:
-                                        break  # Break the loop if no more data is received
-                                    response += chunk  # Append the received chunk to the data
-
+                                chunk_size = min(BUFFER_SIZE, MAX_FILE_SIZE)
+                                response = client_socket.recv(chunk_size)
                                 response_text = response.decode('utf-8')
 
                                 print(response_text)
