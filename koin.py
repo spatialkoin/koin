@@ -145,10 +145,14 @@ def main():
         else:
             raise Exception("No UPnP device found")
     except Exception as e:
-        print("Exception:", str(e))
-        print("No UPnP device discovered. Using the IP address assigned to the device.")
-        external_ip = socket.gethostbyname(socket.gethostname())
-        print("Device IP Address:", external_ip)
+        # Use an external service to determine public IP address
+        response = requests.get('https://httpbin.org/ip')
+        if response.status_code == 200:
+            external_ip = response.json()['origin']
+            print("Public IP Address:", external_ip)
+        else:
+            print("Failed to retrieve public IP address.")
+            return
 
     # Start the register thread
     register_thread_handler = threading.Thread(target=register_thread)
