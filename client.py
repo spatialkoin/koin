@@ -21,7 +21,7 @@ def main():
                 break
 
             client_socket.send(user_input.encode('utf-8'))
-
+            client_socket.send(b'\n')
             # Receiving the response in chunks until the complete message is received
             response = b''
             while True:

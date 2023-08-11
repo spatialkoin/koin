@@ -11,13 +11,14 @@ import requests
 server_socket = None
 upnp = None
 
+BUFFER_SIZE = 1024
+
 register = "../register/"
 files = "../files/"
 
 def handle_client(client_socket):
     while True:
-        try:
-            BUFFER_SIZE = 1024  # Adjust the buffer size according to your needs
+        try:  # Adjust the buffer size according to your needs
 
             data = b''  # Initialize an empty byte string to hold the received data
 
@@ -111,7 +112,17 @@ def register_thread():
                             client_socket.send(user_input.encode('utf-8'))
                             client_socket.send(b'\n')
 
-                            response = client_socket.recv(1024)
+                            response = b''  # Initialize an empty byte string to hold the received data
+
+                            while True:
+                                chunk = client_socket.recv(BUFFER_SIZE)  # Receive a chunk of data
+                                if b'\n' in chunk:
+                                    break
+                                if not chunk:
+                                    break  # Break the loop if no more data is received
+                                data += chunk  # Append the received chunk to the data
+                                print(data)
+                            response = data
                             print("Server response:", response.decode('utf-8'))
                             response_text = response.decode('utf-8')
                             lines = response_text.split('\n')
@@ -123,7 +134,18 @@ def register_thread():
                                 commnd_file = "GET "+ txt_line
                                 client_socket.send(commnd_file.encode('utf-8'))
                                 client_socket.send(b'\n')
-                                response = client_socket.recv(1024)
+                                response = b''  # Initialize an empty byte string to hold the received data
+
+                                while True:
+                                    chunk = client_socket.recv(BUFFER_SIZE)  # Receive a chunk of data
+                                    if b'\n' in chunk:
+                                        break
+                                    if not chunk:
+                                        break  # Break the loop if no more data is received
+                                    data += chunk  # Append the received chunk to the data
+                                    print(data)
+
+                                response = data                                     
                                 response_text = response.decode('utf-8')
 
                                 print(response_text)
