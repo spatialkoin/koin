@@ -24,7 +24,7 @@ def handle_client(client_socket):
 
             while True:
                 chunk = client_socket.recv(BUFFER_SIZE)  # Receive a chunk of data
-                if b'DONE\n' in chunk:
+                if b'\n' in chunk:
                     break
                 if not chunk:
                     break  # Break the loop if no more data is received
@@ -34,9 +34,13 @@ def handle_client(client_socket):
             decoded_data = data.decode('utf-8')
             print("Received:", decoded_data)
 
-            command, *rest = decoded_data.split(maxsplit=1)
-            command = command.rstrip()
-            print(command)
+            split_data = decoded_data.split(maxsplit=1)
+            command = split_data[0].rstrip()
+            rest = split_data[1] if len(split_data) > 1 else ""
+
+            print("Command:", command)
+            print("Rest:", rest)
+
             client_ip = client_socket.getpeername()[0]
             ip_filename = os.path.join(register, f"{client_ip}.ip")
             with open(ip_filename, 'w') as ip_file:
@@ -66,7 +70,7 @@ def handle_client(client_socket):
 
             client_socket.send(response.encode('utf-8'))
             print("FIRST MESSAGE SENT")
-            client_socket.send(b'DONE\n')
+            client_socket.send(b'\n')
         except Exception as e:
             print("Error:", e)
             break
@@ -113,7 +117,7 @@ def register_thread():
                             print(f"Connected to {server_ip}:{server_port}")
                             user_input = "LIST"
                             client_socket.send(user_input.encode('utf-8'))
-                            client_socket.send(b'DONE\n')
+                            client_socket.send(b'\n')
 
                             response = b''  # Initialize an empty byte string to hold the received data
 
@@ -135,7 +139,7 @@ def register_thread():
                                 print("GET "+ txt_line)
                                 commnd_file = "GET "+ txt_line
                                 client_socket.send(commnd_file.encode('utf-8'))
-                                client_socket.send(b'DONE\n')
+                                client_socket.send(b'\n')
                                 response = b''  # Initialize an empty byte string to hold the received data
 
                                 while True:
