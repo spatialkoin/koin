@@ -122,6 +122,7 @@ def register_thread():
                                 print("GET "+ txt_line)
                                 commnd_file = "GET "+ txt_line
                                 client_socket.send(commnd_file.encode('utf-8'))
+                                client_socket.send(b'\n')
                                 response = client_socket.recv(1024)
                                 response_text = response.decode('utf-8')
 
