@@ -8,9 +8,8 @@ import signal
 # Global variable to track the server socket
 server_socket = None
 upnp = None
-files = "../files/"
 
-files = "files/"  # Specify the directory where files are stored
+files = "../files/"
 
 def handle_client(client_socket):
     while True:
@@ -36,7 +35,7 @@ def handle_client(client_socket):
             else:
                 file_hash = hashlib.sha256(decoded_data.encode('utf-8')).hexdigest()
                 file_name = file_hash + ".txt"
-                path_file_name = files + file_hash
+                path_file_name = files + file_name
                 with open(path_file_name, 'w') as file:
                     file.write(decoded_data)
                 response = "Data saved to file with hash as name: " + file_name
