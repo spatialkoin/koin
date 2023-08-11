@@ -13,14 +13,11 @@ upnp = None
 
 register = "../register/"
 files = "../files/"
-MAX_FILE_SIZE = 1024 * 1024  # 1 MB
-BUFFER_SIZE = min(8192, MAX_FILE_SIZE)
 
 def handle_client(client_socket):
     while True:
         try:
-            chunk_size = min(BUFFER_SIZE, MAX_FILE_SIZE)
-            data = client_socket.recv(chunk_size)
+            data = client_socket.recv(1024)
             if not data:
                 break
             decoded_data = data.decode('utf-8')
@@ -98,8 +95,7 @@ def register_thread():
                             print(f"Connected to {server_ip}:{server_port}")
                             user_input = "LIST"
                             client_socket.send(user_input.encode('utf-8'))
-                            chunk_size = min(BUFFER_SIZE, MAX_FILE_SIZE)
-                            response = client_socket.recv(chunk_size)
+                            response = client_socket.recv(1024)
                             print("Server response:", response.decode('utf-8'))
                             response_text = response.decode('utf-8')
                             lines = response_text.split('\n')
@@ -110,9 +106,7 @@ def register_thread():
                                 print("GET "+ txt_line)
                                 commnd_file = "GET "+ txt_line
                                 client_socket.send(commnd_file.encode('utf-8'))
-
-                                chunk_size = min(BUFFER_SIZE, MAX_FILE_SIZE)
-                                response = client_socket.recv(chunk_size)
+                                response = client_socket.recv(1024)
                                 response_text = response.decode('utf-8')
 
                                 print(response_text)
