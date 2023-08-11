@@ -38,12 +38,13 @@ def handle_client(client_socket):
             print("Received:", decoded_data)
 
             command, *rest = decoded_data.split(maxsplit=1)
+            print(command)
             client_ip = client_socket.getpeername()[0]
             ip_filename = os.path.join(register, f"{client_ip}.ip")
             with open(ip_filename, 'w') as ip_file:
                 ip_file.write(client_ip)
 
-            if command == "GET":
+            if command == b'GET':
                 file_name = files + rest[0]
                 if os.path.exists(file_name):
                     with open(file_name, 'r') as file:
@@ -51,7 +52,7 @@ def handle_client(client_socket):
                         response = "File content:\n" + file_content
                 else:
                     response = "File not found"
-            elif command == "LIST":
+            elif command == b'LIST':
                 file_list = "\n".join(os.listdir(files))
                 response = "File list:\n" + file_list
             else:
