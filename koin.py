@@ -28,7 +28,7 @@ def handle_client(client_socket):
                 if not chunk:
                     break  # Break the loop if no more data is received
                 data += chunk  # Append the received chunk to the data
-
+                print(data)
             if not data:
                 break
 
