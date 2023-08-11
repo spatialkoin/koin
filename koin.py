@@ -104,7 +104,7 @@ def register_thread():
 
                             for txt_line in txt_lines:
                                 print("GET "+ txt_line)
-                                commnd_file = "GET "+ user_input.encode('utf-8')
+                                commnd_file = "GET "+ txt_line
                                 client_socket.send(commnd_file)
                                 response = client_socket.recv(1024)
                                 response_text = response.decode('utf-8')
