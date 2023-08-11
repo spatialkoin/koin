@@ -25,7 +25,7 @@ def main():
             # Receiving the response in chunks until the complete message is received
             response = b''
             while True:
-                chunk = client_socket.recv(4096)
+                chunk = client_socket.recv(1024)
                 if not chunk:
                     break
                 response += chunk
