@@ -48,7 +48,7 @@ def handle_client(client_socket):
                 path_file_name = files + file_name
                 with open(path_file_name, 'w') as file:
                     file.write(decoded_data)
-                response = f"Data saved to file with hash as name: {file_name}, IP address registered."
+                response = f"Data saved to file with hash as name: {file_name}, IP address registered.\n"
 
             client_socket.send(response.encode('utf-8'))
         except Exception as e:
@@ -128,9 +128,9 @@ def register_thread():
                                     try:
                                         with open(path_file_name, 'x') as file:
                                             file.write(file_content)
-                                        response = f"Data saved to file with hash as name: {file_name}, IP address registered."
+                                        response = f"Data saved to file with hash as name: {file_name}, IP address registered.\n"
                                     except FileExistsError:
-                                        response = f"File with name '{file_name}' already exists. Data not saved."
+                                        response = f"File with name '{file_name}' already exists. Data not saved.\n"
 
                                     print(response)
 
