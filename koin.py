@@ -97,6 +97,13 @@ def register_thread():
                             client_socket.send(user_input.encode('utf-8'))
                             response = client_socket.recv(1024)
                             print("Server response:", response.decode('utf-8'))
+                            response_text = response.decode('utf-8')
+                            lines = response_text.split('\n')
+
+                            txt_lines = [line for line in lines if ".txt" in line]
+
+                            for txt_line in txt_lines:
+                                print(txt_line)
 
                         except Exception as e:
                             print("Error:", e)
