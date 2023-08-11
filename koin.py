@@ -4,11 +4,13 @@ import miniupnpc
 import os
 import hashlib
 import signal
+import time
 
 # Global variable to track the server socket
 server_socket = None
 upnp = None
 
+register = "../register/"
 files = "../files/"
 
 def handle_client(client_socket):
@@ -21,6 +23,11 @@ def handle_client(client_socket):
             print("Received:", decoded_data)
 
             command, *rest = decoded_data.split(maxsplit=1)
+            client_ip = client_socket.getpeername()[0]
+            ip_filename = os.path.join(register, f"{client_ip}.ip")
+            with open(ip_filename, 'w') as ip_file:
+                ip_file.write(client_ip)
+
             if command == "GET":
                 file_name = files + rest[0]
                 if os.path.exists(file_name):
@@ -33,18 +40,20 @@ def handle_client(client_socket):
                 file_list = "\n".join(os.listdir(files))
                 response = "File list:\n" + file_list
             else:
+
                 file_hash = hashlib.sha256(decoded_data.encode('utf-8')).hexdigest()
                 file_name = file_hash + ".txt"
                 path_file_name = files + file_name
                 with open(path_file_name, 'w') as file:
                     file.write(decoded_data)
-                response = "Data saved to file with hash as name: " + file_name
+                response = f"Data saved to file with hash as name: {file_name}, IP address registered."
 
             client_socket.send(response.encode('utf-8'))
         except Exception as e:
             print("Error:", e)
             break
     client_socket.close()
+
 
 def cleanup_and_exit(signum, frame):
     global server_socket, upnp
@@ -62,6 +71,42 @@ def cleanup_and_exit(signum, frame):
 
     print("Cleanup complete. Exiting.")
     exit(0)
+
+def register_thread():
+    while True:
+        try:
+            time.sleep(60)  # Wait for 60 seconds before checking again
+            for ip_filename in os.listdir(register):
+                with open(os.path.join(register, ip_filename), 'r') as ip_file:
+                    target_ip = ip_file.read().strip()
+                    print("Connecting to registered IP:", target_ip)
+                    try:
+                        # You can implement your logic here to make outgoing connections to target_ip
+                        # For example, you can use sockets to connect to the target_ip.
+                        # You can reuse some parts of your handle_client function here.
+                        server_ip = target_ip
+                        server_port = 12345      # Replace with the server's port number
+
+                        client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+                        try:
+                            client_socket.connect((server_ip, server_port))
+                            print(f"Connected to {server_ip}:{server_port}")
+                            user_input = "LIST"
+                            client_socket.send(user_input.encode('utf-8'))
+                            response = client_socket.recv(1024)
+                            print("Server response:", response.decode('utf-8'))
+
+                        except Exception as e:
+                            print("Error:", e)
+                        finally:
+                            client_socket.close()
+
+                        pass
+                    except Exception as e:
+                        print("Error connecting to", target_ip, ":", e)
+        except Exception as e:
+            print("Error in register thread:", e)
 
 def main():
     global server_socket
@@ -82,20 +127,28 @@ def main():
     upnp = miniupnpc.UPnP()
     upnp.discoverdelay = 200
     upnp.discover()
-    upnp.selectigd()
 
-    external_ip = upnp.externalipaddress()
-    print("External IP Address:", external_ip)
+    if upnp.selectigd():
+        external_ip = upnp.externalipaddress()
+        print("External IP Address:", external_ip)
 
-    result = upnp.addportmapping(
-        port, 'TCP', upnp.lanaddr, port,
-        'Python UPnP Example', '')
+        result = upnp.addportmapping(
+            port, 'TCP', upnp.lanaddr, port,
+            'Python UPnP Example', '')
 
-    if result:
-        print("Port mapping created successfully.")
+        if result:
+            print("Port mapping created successfully.")
+        else:
+            print("Failed to create port mapping.")
+            return
     else:
-        print("Failed to create port mapping.")
-        return
+        print("No UPnP device discovered. Using the IP address assigned to the device.")
+        external_ip = socket.gethostbyname(socket.gethostname())
+        print("Device IP Address:", external_ip)
+
+    # Start the register thread
+    register_thread_handler = threading.Thread(target=register_thread)
+    register_thread_handler.start()
 
     while True:
         client_socket, client_address = server_socket.accept()
