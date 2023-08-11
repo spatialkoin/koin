@@ -38,6 +38,9 @@ def handle_client(client_socket):
                         response = "File content:\n" + file_content
                 else:
                     response = "File not found"
+            elif command == "LIST IP":
+                file_list = "\n".join(os.listdir(register))
+                response = "IP list:\n" + file_list
             elif command == "LIST":
                 file_list = "\n".join(os.listdir(files))
                 response = "File list:\n" + file_list
