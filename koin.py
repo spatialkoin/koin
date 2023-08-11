@@ -31,9 +31,6 @@ def handle_client(client_socket):
                 data += chunk  # Append the received chunk to the data
                 print(data)
 
-            if not data:
-                break
-
             decoded_data = data.decode('utf-8')
             print("Received:", decoded_data)
 
