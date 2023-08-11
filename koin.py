@@ -17,9 +17,19 @@ files = "../files/"
 def handle_client(client_socket):
     while True:
         try:
-            data = client_socket.recv(1024)
+            BUFFER_SIZE = 4096  # Adjust the buffer size according to your needs
+
+            data = b''  # Initialize an empty byte string to hold the received data
+
+            while True:
+                chunk = client_socket.recv(BUFFER_SIZE)  # Receive a chunk of data
+                if not chunk:
+                    break  # Break the loop if no more data is received
+                data += chunk  # Append the received chunk to the data
+
             if not data:
                 break
+
             decoded_data = data.decode('utf-8')
             print("Received:", decoded_data)
 
