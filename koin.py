@@ -54,6 +54,7 @@ def handle_client(client_socket):
                 print("Received API:", command)
                 file_list = "\n".join(os.listdir(files))
                 response = "File list:\n" + file_list
+                print(response)
             else:
 
                 file_hash = hashlib.sha256(decoded_data.encode('utf-8')).hexdigest()
@@ -68,6 +69,7 @@ def handle_client(client_socket):
         except Exception as e:
             print("Error:", e)
             break
+
     client_socket.close()
 
 
