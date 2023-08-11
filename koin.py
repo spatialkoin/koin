@@ -23,6 +23,8 @@ def handle_client(client_socket):
 
             while True:
                 chunk = client_socket.recv(BUFFER_SIZE)  # Receive a chunk of data
+                if b'\n' in chunk:
+                    break
                 if not chunk:
                     break  # Break the loop if no more data is received
                 data += chunk  # Append the received chunk to the data
@@ -105,6 +107,8 @@ def register_thread():
                             print(f"Connected to {server_ip}:{server_port}")
                             user_input = "LIST"
                             client_socket.send(user_input.encode('utf-8'))
+                            client_socket.send(b'\n')
+
                             response = client_socket.recv(1024)
                             print("Server response:", response.decode('utf-8'))
                             response_text = response.decode('utf-8')
