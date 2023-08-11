@@ -10,6 +10,8 @@ server_socket = None
 upnp = None
 files = "../files/"
 
+files = "files/"  # Specify the directory where files are stored
+
 def handle_client(client_socket):
     while True:
         try:
@@ -22,16 +24,20 @@ def handle_client(client_socket):
             command, *rest = decoded_data.split(maxsplit=1)
             if command == "GET":
                 file_name = files + rest[0]
-                if os.path.exists( file_name):
-                    with open( file_name, 'r') as file:
+                if os.path.exists(file_name):
+                    with open(file_name, 'r') as file:
                         file_content = file.read()
                         response = "File content:\n" + file_content
                 else:
                     response = "File not found"
+            elif command == "LIST":
+                file_list = "\n".join(os.listdir(files))
+                response = "File list:\n" + file_list
             else:
                 file_hash = hashlib.sha256(decoded_data.encode('utf-8')).hexdigest()
-                file_name = files + file_hash + ".txt"
-                with open(file_name, 'w') as file:
+                file_name = file_hash + ".txt"
+                path_file_name = files + file_hash
+                with open(path_file_name, 'w') as file:
                     file.write(decoded_data)
                 response = "Data saved to file with hash as name: " + file_name
 
