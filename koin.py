@@ -38,6 +38,7 @@ def handle_client(client_socket):
             print("Received:", decoded_data)
 
             command, *rest = decoded_data.split(maxsplit=1)
+            command = command.rstrip()
             print(command)
             client_ip = client_socket.getpeername()[0]
             ip_filename = os.path.join(register, f"{client_ip}.ip")
