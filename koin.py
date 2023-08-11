@@ -20,7 +20,7 @@ def handle_client(client_socket):
     while True:
         try:  # Adjust the buffer size according to your needs
 
-            data = b''  # Initialize an empty byte string to hold the received data
+            data = None  # Initialize an empty byte string to hold the received data
 
             while True:
                 chunk = client_socket.recv(BUFFER_SIZE)  # Receive a chunk of data
@@ -44,7 +44,7 @@ def handle_client(client_socket):
             with open(ip_filename, 'w') as ip_file:
                 ip_file.write(client_ip)
 
-            if command == b'GET':
+            if command == "GET":
                 file_name = files + rest[0]
                 if os.path.exists(file_name):
                     with open(file_name, 'r') as file:
@@ -52,7 +52,7 @@ def handle_client(client_socket):
                         response = "File content:\n" + file_content
                 else:
                     response = "File not found"
-            elif command == b'LIST':
+            elif command == "LIST":
                 file_list = "\n".join(os.listdir(files))
                 response = "File list:\n" + file_list
             else:
@@ -113,7 +113,7 @@ def register_thread():
                             client_socket.send(user_input.encode('utf-8'))
                             client_socket.send(b'\n')
 
-                            response = b''  # Initialize an empty byte string to hold the received data
+                            response = None  # Initialize an empty byte string to hold the received data
 
                             while True:
                                 chunk = client_socket.recv(BUFFER_SIZE)  # Receive a chunk of data
@@ -134,7 +134,7 @@ def register_thread():
                                 commnd_file = "GET "+ txt_line
                                 client_socket.send(commnd_file.encode('utf-8'))
                                 client_socket.send(b'\n')
-                                response = b''  # Initialize an empty byte string to hold the received data
+                                response = None  # Initialize an empty byte string to hold the received data
 
                                 while True:
                                     chunk = client_socket.recv(BUFFER_SIZE)  # Receive a chunk of data
