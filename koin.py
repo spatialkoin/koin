@@ -128,20 +128,24 @@ def main():
     upnp.discoverdelay = 200
     upnp.discover()
 
-    if upnp.selectigd():
-        external_ip = upnp.externalipaddress()
-        print("External IP Address:", external_ip)
+    try:
+        if upnp.selectigd():
+            external_ip = upnp.externalipaddress()
+            print("External IP Address:", external_ip)
 
-        result = upnp.addportmapping(
-            port, 'TCP', upnp.lanaddr, port,
-            'Python UPnP Example', '')
+            result = upnp.addportmapping(
+                port, 'TCP', upnp.lanaddr, port,
+                'Python UPnP Example', '')
 
-        if result:
-            print("Port mapping created successfully.")
+            if result:
+                print("Port mapping created successfully.")
+            else:
+                print("Failed to create port mapping.")
+                return
         else:
-            print("Failed to create port mapping.")
-            return
-    else:
+            raise Exception("No UPnP device found")
+    except Exception as e:
+        print("Exception:", str(e))
         print("No UPnP device discovered. Using the IP address assigned to the device.")
         external_ip = socket.gethostbyname(socket.gethostname())
         print("Device IP Address:", external_ip)
