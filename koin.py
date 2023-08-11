@@ -109,6 +109,11 @@ def register_thread():
                                 response = client_socket.recv(1024)
                                 response_text = response.decode('utf-8')
                                 print(response_text)
+                                if response_text == "File content:\n" :
+                                    response_text = response_text.index("File content:\n") + len("File content:\n")
+                                    print(response_text)
+                                    file_hash = hashlib.sha256(response_text).hexdigest()
+                                    print(file_hash)
 
                         except Exception as e:
                             print("Error:", e)
