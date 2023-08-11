@@ -40,7 +40,7 @@ def handle_client(client_socket):
                         response = "File content:\n" + file_content
                 else:
                     response = "File not found"
-            elif command == "LIST IP":
+            elif command == "LIST_IP":
                 print("Executing LIST IP branch")
                 file_list = "\n".join(os.listdir(register))
                 response = "IP list:\n" + file_list
