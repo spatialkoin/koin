@@ -54,6 +54,7 @@ def handle_client(client_socket):
                 else:
                     response = "File not found"
             elif command == "LIST":
+                print("Received API:", command)
                 file_list = "\n".join(os.listdir(files))
                 response = "File list:\n" + file_list
             else:
