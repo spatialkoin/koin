@@ -29,6 +29,7 @@ def handle_client(client_socket):
                     break  # Break the loop if no more data is received
                 data += chunk  # Append the received chunk to the data
                 print(data)
+
             if not data:
                 break
 
@@ -62,6 +63,7 @@ def handle_client(client_socket):
                 response = f"Data saved to file with hash as name: {file_name}, IP address registered."
 
             client_socket.send(response.encode('utf-8'))
+            client_socket.send(b'\n')
         except Exception as e:
             print("Error:", e)
             break
