@@ -86,7 +86,7 @@ def cleanup_and_exit(signum, frame):
 def register_thread():
     while True:
         try:
-            time.sleep(60)  # Wait for 60 seconds before checking again
+            time.sleep(6)  # Wait for 60 seconds before checking again
             for ip_filename in os.listdir(register):
                 with open(os.path.join(register, ip_filename), 'r') as ip_file:
                     target_ip = ip_file.read().strip()
@@ -105,7 +105,7 @@ def register_thread():
                             print(f"Connected to {server_ip}:{server_port}")
                             user_input = "LIST"
                             client_socket.send(user_input.encode('utf-8'))
-                            response = client_socket.recv(1024)
+                            response = client_socket.recv(4096)
                             print("Server response:", response.decode('utf-8'))
                             response_text = response.decode('utf-8')
                             lines = response_text.split('\n')
@@ -116,7 +116,7 @@ def register_thread():
                                 print("GET "+ txt_line)
                                 commnd_file = "GET "+ txt_line
                                 client_socket.send(commnd_file.encode('utf-8'))
-                                response = client_socket.recv(1024)
+                                response = client_socket.recv(4096)
                                 response_text = response.decode('utf-8')
 
                                 print(response_text)
