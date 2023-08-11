@@ -21,15 +21,8 @@ def main():
                 break
 
             client_socket.send(user_input.encode('utf-8'))
-            client_socket.send(b'\n')
-            # Receiving the response in chunks until the complete message is received
-            response = b''
-            while True:
-                chunk = client_socket.recv(1024)
-                if not chunk:
-                    break
-                response += chunk
 
+            response = client_socket.recv(1024)
             print("Server response:", response.decode('utf-8'))
 
     except Exception as e:
