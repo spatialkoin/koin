@@ -121,6 +121,17 @@ def register_thread():
                                     file_hash = hashlib.sha256(file_content.encode()).hexdigest()
                                     print("File hash:")
                                     print(file_hash)
+                                    file_name = file_hash + ".txt"
+                                    path_file_name = files + file_name
+
+                                    try:
+                                        with open(path_file_name, 'x') as file:
+                                            file.write(file_content)
+                                        response = f"Data saved to file with hash as name: {file_name}, IP address registered."
+                                    except FileExistsError:
+                                        response = f"File with name '{file_name}' already exists. Data not saved."
+
+                                    print(response)
 
                         except Exception as e:
                             print("Error:", e)
