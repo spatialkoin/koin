@@ -76,7 +76,7 @@ def cleanup_and_exit(signum, frame):
 def register_thread():
     while True:
         try:
-            time.sleep(60)  # Wait for 60 seconds before checking again
+            time.sleep(6)  # Wait for 60 seconds before checking again
             for ip_filename in os.listdir(register):
                 with open(os.path.join(register, ip_filename), 'r') as ip_file:
                     target_ip = ip_file.read().strip()
