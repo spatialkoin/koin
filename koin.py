@@ -20,7 +20,7 @@ def handle_client(client_socket):
     while True:
         try:  # Adjust the buffer size according to your needs
 
-            data = None  # Initialize an empty byte string to hold the received data
+            data = b''  # Initialize an empty byte string to hold the received data
 
             while True:
                 chunk = client_socket.recv(BUFFER_SIZE)  # Receive a chunk of data
@@ -114,7 +114,7 @@ def register_thread():
                             client_socket.send(user_input.encode('utf-8'))
                             client_socket.send(b'\n')
 
-                            response = None  # Initialize an empty byte string to hold the received data
+                            response = b''  # Initialize an empty byte string to hold the received data
 
                             while True:
                                 chunk = client_socket.recv(BUFFER_SIZE)  # Receive a chunk of data
@@ -135,7 +135,7 @@ def register_thread():
                                 commnd_file = "GET "+ txt_line
                                 client_socket.send(commnd_file.encode('utf-8'))
                                 client_socket.send(b'\n')
-                                response = None  # Initialize an empty byte string to hold the received data
+                                response = b''  # Initialize an empty byte string to hold the received data
 
                                 while True:
                                     chunk = client_socket.recv(BUFFER_SIZE)  # Receive a chunk of data
