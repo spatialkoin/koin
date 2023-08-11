@@ -129,7 +129,7 @@ def register_thread():
                                     break  # Break the loop if no more data is received
                                 response += chunk  # Append the received chunk to the data
 
-                            print("Server response:", response.decode('utf-8'))
+                            print("Server response---:", response.decode('utf-8'))
                             response_text = response.decode('utf-8')
                             lines = response_text.split('\n')
 
