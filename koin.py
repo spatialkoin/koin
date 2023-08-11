@@ -5,6 +5,7 @@ import os
 import hashlib
 import signal
 import time
+import requests
 
 # Global variable to track the server socket
 server_socket = None
