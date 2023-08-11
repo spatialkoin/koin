@@ -1,6 +1,10 @@
 import socket
 import sys
 
+
+
+MAX_FILE_SIZE = 1024 * 1024
+
 def main():
     if len(sys.argv) != 2:
         print("Usage: python client.py <server_ip>")
@@ -22,7 +26,7 @@ def main():
 
             client_socket.send(user_input.encode('utf-8'))
 
-            response = client_socket.recv(1024)
+            response = client_socket.recv(MAX_FILE_SIZE)
             print("Server response:", response.decode('utf-8'))
 
     except Exception as e:
