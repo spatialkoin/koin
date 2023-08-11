@@ -38,12 +38,16 @@ def handle_client(client_socket):
                         response = "File content:\n" + file_content
                 else:
                     response = "File not found"
+            print(f"Received command: '{command}'")
             elif command == "LIST IP":
+                print("Executing LIST IP branch")
                 file_list = "\n".join(os.listdir(register))
                 response = "IP list:\n" + file_list
             elif command == "LIST":
+                print("Executing LIST branch")
                 file_list = "\n".join(os.listdir(files))
                 response = "File list:\n" + file_list
+
             else:
 
                 file_hash = hashlib.sha256(decoded_data.encode('utf-8')).hexdigest()
