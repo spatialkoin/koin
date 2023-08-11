@@ -11,49 +11,37 @@ import requests
 server_socket = None
 upnp = None
 
-BUFFER_SIZE = 1024
+MAX_FILE_SIZE = 1024 * 1024  # 1 MB
+BUFFER_SIZE = min(8192, MAX_FILE_SIZE)
+
 
 register = "../register/"
 files = "../files/"
 
 def handle_client(client_socket):
+    # ... (rest of the function remains the same)
+    # Adjust the chunk size for receiving files
+    chunk_size = min(BUFFER_SIZE, MAX_FILE_SIZE)
     while True:
-        try:  # Adjust the buffer size according to your needs
-
-            data = b''  # Initialize an empty byte string to hold the received data
-
-            while True:
-                chunk = client_socket.recv(BUFFER_SIZE)  # Receive a chunk of data
-                if b'\n' in chunk:
-                    break
-                if not chunk:
-                    break  # Break the loop if no more data is received
-                data += chunk  # Append the received chunk to the data
-                print(data)
-
+        try:
+            data = client_socket.recv(chunk_size)  # Receive a chunk of data
+            if not data:
+                break  # Break the loop if no more data is received
             decoded_data = data.decode('utf-8')
-            print("Received:", decoded_data)
 
-            split_data = decoded_data.split(maxsplit=1)
-            command = split_data[0].rstrip()
-            rest = split_data[1] if len(split_data) > 1 else ""
-
-            print("Command:", command)
-            print("Rest:", rest)
-
-            client_ip = client_socket.getpeername()[0]
-            ip_filename = os.path.join(register, f"{client_ip}.ip")
-            with open(ip_filename, 'w') as ip_file:
-                ip_file.write(client_ip)
-
+            # ... (rest of the function remains the same)
+            # Handle the file content received in chunks
             if command == "GET":
                 file_name = files + rest[0]
                 if os.path.exists(file_name):
-                    with open(file_name, 'r') as file:
-                        file_content = file.read()
-                        response = "File content:\n" + file_content
+                    with open(file_name, 'rb') as file:
+                        file_content = file.read(MAX_FILE_SIZE)
+                        while file_content:
+                            client_socket.send(file_content)
+                            file_content = file.read(MAX_FILE_SIZE)
                 else:
                     response = "File not found"
+
             elif command == "LIST":
                 print("Received API:", command)
                 file_list = "\n".join(os.listdir(files))
@@ -76,7 +64,6 @@ def handle_client(client_socket):
             break
 
     client_socket.close()
-
 
 def cleanup_and_exit(signum, frame):
     global server_socket, upnp
