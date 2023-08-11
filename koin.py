@@ -110,11 +110,16 @@ def register_thread():
                                 response_text = response.decode('utf-8')
 
                                 print(response_text)
-                                prefix = "File content:\n"
+                                prefix = "File content:"
                                 if response_text.startswith(prefix):
-                                    response_text = response_text.index("File content:\n") + len("File content:\n")
-                                    print(response_text)
-                                    file_hash = hashlib.sha256(response_text).hexdigest()
+                                    content_start_index = response_text.index("\n", len(prefix)) + 1
+                                    file_content = response_text[content_start_index:]
+
+                                    print("File content Removed:")
+                                    print(file_content)
+
+                                    file_hash = hashlib.sha256(file_content.encode()).hexdigest()
+                                    print("File hash:")
                                     print(file_hash)
 
                         except Exception as e:
