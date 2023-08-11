@@ -108,8 +108,10 @@ def register_thread():
                                 client_socket.send(commnd_file.encode('utf-8'))
                                 response = client_socket.recv(1024)
                                 response_text = response.decode('utf-8')
+
                                 print(response_text)
-                                if response_text == "File content:\n" :
+                                prefix = "File content:\n"
+                                if response_text.startswith(prefix):
                                     response_text = response_text.index("File content:\n") + len("File content:\n")
                                     print(response_text)
                                     file_hash = hashlib.sha256(response_text).hexdigest()
