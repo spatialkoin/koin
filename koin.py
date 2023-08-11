@@ -30,6 +30,8 @@ def handle_client(client_socket):
             with open(ip_filename, 'w') as ip_file:
                 ip_file.write(client_ip)
 
+
+            print(f"Received command: '{command}'")
             if command == "GET":
                 file_name = files + rest[0]
                 if os.path.exists(file_name):
@@ -38,7 +40,6 @@ def handle_client(client_socket):
                         response = "File content:\n" + file_content
                 else:
                     response = "File not found"
-            print(f"Received command: '{command}'")
             elif command == "LIST IP":
                 print("Executing LIST IP branch")
                 file_list = "\n".join(os.listdir(register))
