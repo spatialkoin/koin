@@ -11,7 +11,6 @@ import requests
 server_socket = None
 upnp = None
 MAX_FILE_SIZE = 1024 * 1024
-
 register = "../register/"
 files = "../files/"
 
@@ -82,7 +81,7 @@ def cleanup_and_exit(signum, frame):
     print("Cleanup complete. Exiting.")
     exit(0)
 
-def register_thread():
+def register_thread(external_ip):
     while True:
         try:
             time.sleep(6)  # Wait for 60 seconds before checking again
@@ -102,6 +101,21 @@ def register_thread():
                         try:
                             client_socket.connect((server_ip, server_port))
                             print(f"Connected to {server_ip}:{server_port}")
+                            user_input = "LIST_IP"
+                            client_socket.send(user_input.encode('utf-8'))
+                            response = client_socket.recv(MAX_FILE_SIZE)
+                            print("Server response:", response.decode('utf-8'))
+                            response_text = response.decode('utf-8')
+                            lines = response_text.split('\n')
+
+                            txt_lines = [line.replace(".ip", "") for line in lines if ".ip" in line]
+                            for txt_line in txt_lines:
+                                print("SAVE IP " + str(external_ip) + " IP" + txt_line)
+                                ip_filename = os.path.join(register, f"{txt_line}.ip")
+                                if not os.path.exists(ip_filename) and str(external_ip) != txt_line:
+                                    with open(ip_filename, 'w') as ip_file:
+                                        ip_file.write(txt_line)
+
                             user_input = "LIST"
                             client_socket.send(user_input.encode('utf-8'))
                             response = client_socket.recv(MAX_FILE_SIZE)
@@ -200,7 +214,7 @@ def main():
             return
 
     # Start the register thread
-    register_thread_handler = threading.Thread(target=register_thread)
+    register_thread_handler = threading.Thread(target=register_thread, args=(external_ip,))
     register_thread_handler.start()
 
     while True:
