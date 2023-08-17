@@ -1,6 +1,6 @@
 import socket
 import sys
-
+import time
 
 
 MAX_FILE_SIZE = 1024 * 1024
@@ -23,12 +23,13 @@ def main():
             user_input = input("Enter a message to send to the server (type 'exit' to quit): ")
             if user_input.lower() == 'exit':
                 break
-            print(user_input)    
+            print(user_input)
             client_socket.send(user_input.encode('utf-8'))
 
             response = client_socket.recv(MAX_FILE_SIZE)
             print("Server response:", response.decode('utf-8'))
-
+            time.sleep(0.5)
+            
     except Exception as e:
         print("Error:", e)
     finally:
