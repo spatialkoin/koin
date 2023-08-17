@@ -161,7 +161,7 @@ def handle_client(client_socket):
             print("TEST 0")
             client_socket.send(response.encode('utf-8'))
             print("TEST 1")
-            client_socket.send(end_of_message_indicator.encode('utf-8'))
+            client_socket.send(end_of_message_indicator)
             print("TEST 2")
         except Exception as e:
             print("Error:", e)
