@@ -5,7 +5,7 @@ import time
 
 MAX_FILE_SIZE = 1024 * 1024
 
-end_of_message_indicator = b"\r\r\r\r\r"
+end_of_message_indicator = b"END\r\r\r\r\r"
 
 def main():
     if len(sys.argv) != 2:
@@ -31,7 +31,7 @@ def main():
 
             while True:
                 chunk = client_socket.recv(MAX_FILE_SIZE)
-                if not chunk or chunk == end_of_message_indicator:
+                if not chunk or chunk.decode('utf-8') == end_of_message_indicator.decode('utf-8'):
                     break
                 response += chunk
                 #print("Server response:", response.decode('utf-8'))

@@ -17,7 +17,7 @@ register = "../register/"
 files = "../files/"
 document_index = '../document_index.pkl'
 
-end_of_message_indicator = b"\r\r\r\r\r"
+end_of_message_indicator = b"END\r\r\r\r\r"
 
 class DocumentIndex:
     def __init__(self, index_file_path, model_directory):
