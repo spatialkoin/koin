@@ -5,6 +5,8 @@ import time
 
 MAX_FILE_SIZE = 1024 * 1024
 
+end_of_message_indicator = b"\r\r\r\r\r"
+
 def main():
     if len(sys.argv) != 2:
         print("Usage: python client.py <server_ip>")
@@ -29,7 +31,7 @@ def main():
 
             while True:
                 chunk = client_socket.recv(MAX_FILE_SIZE)
-                if not chunk:  # If no more data is received, break the loop
+                if not chunk or chunk == end_of_message_indicator:
                     break
                 response += chunk
                 print("Server response:", response.decode('utf-8'))
