@@ -117,17 +117,17 @@ def handle_client(client_socket):
                 if os.path.exists(file_name):
                     with open(file_name, 'r') as file:
                         file_content = file.read()
-                        response = b"File content:\n" + file_content
+                        response = "File content:\n" + file_content
                 else:
-                    response = b"File not found"
+                    response = "File not found"
             elif command == "LIST_IP":
                 print("Executing LIST IP branch")
                 file_list = "\n".join(os.listdir(register))
-                response = b"IP list:\n" + file_list
+                response = "IP list:\n" + file_list
             elif command == "LIST":
                 print("Executing LIST branch")
                 file_list = "\n".join(os.listdir(files))
-                response = b"File list:\n" + file_list
+                response = "File list:\n" + file_list
             elif command == "SEARCH":
                 # Initialize the DocumentIndex with the existing index data
                 model_directory = '../models'  # Replace with the actual directory path for models
@@ -145,9 +145,9 @@ def handle_client(client_socket):
                                 print(f"Matching content found in file: {filename}")
 
                 if matching_filenames:
-                    response = b"\n".join(matching_filenames)
+                    response = "\n".join(matching_filenames)
                 else:
-                    response = b"No matching content found."
+                    response = "No matching content found."
 
             else:
 
@@ -158,8 +158,11 @@ def handle_client(client_socket):
                     file.write(decoded_data)
                 response = f"Data saved to file with hash as name: {file_name}, IP address registered.\n"
 
+            print("TEST 0")
             client_socket.send(response.encode('utf-8'))
+            print("TEST 1")
             client_socket.send(end_of_message_indicator.encode('utf-8'))
+            print("TEST 2")
         except Exception as e:
             print("Error:", e)
             break
