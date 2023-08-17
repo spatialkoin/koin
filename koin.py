@@ -17,7 +17,7 @@ register = "../register/"
 files = "../files/"
 document_index = '../document_index.pkl'
 
-end_of_message_indicator = "END\r\r\r\r\r"
+end_of_message_indicator = b'END\r\r\r\r\r'
 
 class DocumentIndex:
     def __init__(self, index_file_path, model_directory):
@@ -157,7 +157,7 @@ def handle_client(client_socket):
                 with open(path_file_name, 'w') as file:
                     file.write(decoded_data)
                 response = f"Data saved to file with hash as name: {file_name}, IP address registered.\n"
-            print("RESPONSE FROM SERVER :" + response + ":")
+
             client_socket.send(response.encode('utf-8'))
             client_socket.send(end_of_message_indicator.encode('utf-8'))
         except Exception as e:
@@ -205,7 +205,7 @@ def register_thread(external_ip):
                             print(f"Connected to {server_ip}:{server_port}")
                             user_input = "LIST_IP"
                             client_socket.send(user_input.encode('utf-8'))
-                            response = b""  # Initialize an empty bytes object to hold the complete response
+                            response = b''  # Initialize an empty bytes object to hold the complete response
 
                             while True:
                                 chunk = client_socket.recv(MAX_FILE_SIZE)
@@ -228,7 +228,7 @@ def register_thread(external_ip):
 
                             user_input = "LIST"
                             client_socket.send(user_input.encode('utf-8'))
-                            response = b""  # Initialize an empty bytes object to hold the complete response
+                            response = b''  # Initialize an empty bytes object to hold the complete response
 
                             while True:
                                 chunk = client_socket.recv(MAX_FILE_SIZE)
@@ -247,7 +247,7 @@ def register_thread(external_ip):
                                 print("GET "+ txt_line)
                                 commnd_file = "GET "+ txt_line
                                 client_socket.send(commnd_file.encode('utf-8'))
-                                response = b""  # Initialize an empty bytes object to hold the complete response
+                                response = b''  # Initialize an empty bytes object to hold the complete response
 
                                 while True:
                                     chunk = client_socket.recv(MAX_FILE_SIZE)
