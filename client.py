@@ -34,7 +34,7 @@ def main():
                 if not chunk or chunk == end_of_message_indicator:
                     break
                 response += chunk
-                print("Server response:", response.decode('utf-8'))
+                #print("Server response:", response.decode('utf-8'))
 
             print("Server response:", response.decode('utf-8'))
             time.sleep(0.5)
