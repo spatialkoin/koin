@@ -6,6 +6,8 @@ import hashlib
 import signal
 import time
 import requests
+import pickle
+import re
 
 # Global variable to track the server socket
 server_socket = None
@@ -13,6 +15,45 @@ upnp = None
 MAX_FILE_SIZE = 1024 * 1024
 register = "../register/"
 files = "../files/"
+document_index = '../document_index.pkl'
+
+class DocumentIndex:
+    def __init__(self, index_file_path, model_directory):
+        self.index_file_path = index_file_path
+        self.model_directory = model_directory
+        self.index = {}
+
+        if os.path.exists(self.index_file_path):
+            with open(self.index_file_path, 'rb') as index_file:
+                self.index = pickle.load(index_file)
+
+    def add_document(self, model_name, file_name, model, file_content):
+        self.index[file_name] = {'model_name': model_name, 'model_file': self._save_model(model), 'content': file_content}
+        self._save_index()
+
+    def _save_index(self):
+        with open(self.index_file_path, 'wb') as index_file:
+            pickle.dump(self.index, index_file)
+
+    def _save_model(self, model):
+        model_file_name = os.path.join(self.model_directory, f"{len(self.index)}_model.pkl")
+        with open(model_file_name, 'wb') as model_file:
+            pickle.dump(model, model_file)
+        return model_file_name
+
+    def search_by_model(self, model_name):
+        matching_files = [file_name for file_name, data in self.index.items() if data['model_name'] == model_name]
+        return matching_files
+
+    def search_by_string(self, search_string):
+        matching_files = [file_name for file_name, data in self.index.items() if self._string_in_file(search_string, data['content'])]
+        return matching_files
+
+    def _string_in_file(self, search_string, model_content):
+        escaped_search_string = re.escape(search_string)
+        pattern = re.compile(escaped_search_string, re.IGNORECASE)
+        match = re.search(pattern, model_content)
+        return match is not None
 
 def handle_client(client_socket):
     while True:
@@ -47,6 +88,26 @@ def handle_client(client_socket):
                 print("Executing LIST branch")
                 file_list = "\n".join(os.listdir(files))
                 response = "File list:\n" + file_list
+            elif command == "SEARCH":
+                # Initialize the DocumentIndex with the existing index data
+                model_directory = '../models'  # Replace with the actual directory path for models
+                index = DocumentIndex(document_index, model_directory)
+                search_string = rest[0]  # Replace this with the string you want to search for
+
+                matching_filenames = []
+                for filename, data in index.index.items():
+                    if isinstance(data, dict):
+                        model_name = data.get('model_name', '')
+                        if model_name == 'example_model':
+                            content = data.get('content', '')
+                            if re.search(search_string, content, re.IGNORECASE):
+                                matching_filenames.append(f"file: {filename}")
+                                print(f"Matching content found in file: {filename}")
+
+                if matching_filenames:
+                    response = "\n".join(matching_filenames)
+                else:
+                    response = "No matching content found."
 
             else:
 
