@@ -157,6 +157,7 @@ def handle_client(client_socket):
                 response = f"Data saved to file with hash as name: {file_name}, IP address registered.\n"
 
             client_socket.send(response.encode('utf-8'))
+            data = None
         except Exception as e:
             print("Error:", e)
             break
