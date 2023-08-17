@@ -157,7 +157,7 @@ def handle_client(client_socket):
                 with open(path_file_name, 'w') as file:
                     file.write(decoded_data)
                 response = f"Data saved to file with hash as name: {file_name}, IP address registered.\n"
-
+            print("RESPONSE FROM SERVER :" + response + ":")
             client_socket.send(response.encode('utf-8'))
             client_socket.send(end_of_message_indicator.encode('utf-8'))
         except Exception as e:
