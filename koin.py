@@ -117,17 +117,17 @@ def handle_client(client_socket):
                 if os.path.exists(file_name):
                     with open(file_name, 'r') as file:
                         file_content = file.read()
-                        response = "File content:\n" + file_content
+                        response = b"File content:\n" + file_content
                 else:
-                    response = "File not found"
+                    response = b"File not found"
             elif command == "LIST_IP":
                 print("Executing LIST IP branch")
                 file_list = "\n".join(os.listdir(register))
-                response = "IP list:\n" + file_list
+                response = b"IP list:\n" + file_list
             elif command == "LIST":
                 print("Executing LIST branch")
                 file_list = "\n".join(os.listdir(files))
-                response = "File list:\n" + file_list
+                response = b"File list:\n" + file_list
             elif command == "SEARCH":
                 # Initialize the DocumentIndex with the existing index data
                 model_directory = '../models'  # Replace with the actual directory path for models
@@ -145,9 +145,9 @@ def handle_client(client_socket):
                                 print(f"Matching content found in file: {filename}")
 
                 if matching_filenames:
-                    response = "\n".join(matching_filenames)
+                    response = b"\n".join(matching_filenames)
                 else:
-                    response = "No matching content found."
+                    response = b"No matching content found."
 
             else:
 
