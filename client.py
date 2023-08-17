@@ -5,7 +5,7 @@ import time
 
 MAX_FILE_SIZE = 1024 * 1024
 
-end_of_message_indicator = b"END\r\r\r\r\r"
+end_of_message_indicator = "END\r\r\r\r\r"
 
 def main():
     if len(sys.argv) != 2:
@@ -27,7 +27,7 @@ def main():
                 break
             print(user_input)
             client_socket.send(user_input.encode('utf-8'))
-            response = b""  # Initialize an empty bytes object to hold the complete response
+            response = ""  # Initialize an empty bytes object to hold the complete response
 
             while True:
                 chunk = client_socket.recv(MAX_FILE_SIZE)
