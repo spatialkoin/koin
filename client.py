@@ -32,8 +32,8 @@ def main():
                 if not chunk:  # If no more data is received, break the loop
                     break
                 response += chunk
+                print("Server response:", response.decode('utf-8'))
 
-            response = client_socket.recv(MAX_FILE_SIZE)
             print("Server response:", response.decode('utf-8'))
             time.sleep(0.5)
 
