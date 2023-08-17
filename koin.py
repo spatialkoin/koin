@@ -55,6 +55,44 @@ class DocumentIndex:
         match = re.search(pattern, model_content)
         return match is not None
 
+
+def index_for_search():
+    while True:
+        # Sample index data structure
+        sample_index_data = {
+            # Add more files if needed
+        }
+
+        # Save the sample index data to a file
+        with open(document_index, 'wb') as index_file:
+            pickle.dump(sample_index_data, index_file)
+
+        print("Sample index data saved to 'document_index.pkl'.")
+
+        # Example model (replace this with your actual model instance)
+        example_model = {'model_data': 'example model data'}
+
+        index = DocumentIndex(document_index, '../models')
+
+
+        with open(document_index, 'rb') as index_file:
+            index_data = pickle.load(index_file)
+        print(index_data)
+
+
+        text_files_directory = '../files'  # Replace this with the actual directory path
+        model_name = 'example_model'  # Replace this with a meaningful model name
+
+        for filename in os.listdir(text_files_directory):
+            if filename.endswith('.txt'):
+                file_path = os.path.join(text_files_directory, filename)
+                with open(file_path, 'r') as file:
+                    file_content = file.read()
+
+                index.add_document(model_name, filename, example_model, file_content)
+
+        time.sleep(3)
+
 def handle_client(client_socket):
     while True:
         try:
@@ -277,6 +315,10 @@ def main():
     # Start the register thread
     register_thread_handler = threading.Thread(target=register_thread, args=(external_ip,))
     register_thread_handler.start()
+
+
+    index_for_search_thread_handler = threading.Thread(target=index_for_search)
+    index_for_search_thread_handler.start()
 
     while True:
         client_socket, client_address = server_socket.accept()
