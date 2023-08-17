@@ -17,6 +17,8 @@ register = "../register/"
 files = "../files/"
 document_index = '../document_index.pkl'
 
+end_of_message_indicator = b"\r\r\r\r\r"
+
 class DocumentIndex:
     def __init__(self, index_file_path, model_directory):
         self.index_file_path = index_file_path
@@ -157,8 +159,7 @@ def handle_client(client_socket):
                 response = f"Data saved to file with hash as name: {file_name}, IP address registered.\n"
 
             client_socket.send(response.encode('utf-8'))
-            client_socket.send("\r\r\r\r\r".encode('utf-8'))
-            data = None
+            client_socket.send(end_of_message_indicator.encode('utf-8'))
         except Exception as e:
             print("Error:", e)
             break
@@ -204,7 +205,15 @@ def register_thread(external_ip):
                             print(f"Connected to {server_ip}:{server_port}")
                             user_input = "LIST_IP"
                             client_socket.send(user_input.encode('utf-8'))
-                            response = client_socket.recv(MAX_FILE_SIZE)
+                            response = b""  # Initialize an empty bytes object to hold the complete response
+
+                            while True:
+                                chunk = client_socket.recv(MAX_FILE_SIZE)
+                                if not chunk or chunk == end_of_message_indicator:
+                                    break
+                                response += chunk
+                                print("Server response:", response.decode('utf-8'))
+
                             print("Server response:", response.decode('utf-8'))
                             response_text = response.decode('utf-8')
                             lines = response_text.split('\n')
@@ -219,7 +228,15 @@ def register_thread(external_ip):
 
                             user_input = "LIST"
                             client_socket.send(user_input.encode('utf-8'))
-                            response = client_socket.recv(MAX_FILE_SIZE)
+                            response = b""  # Initialize an empty bytes object to hold the complete response
+
+                            while True:
+                                chunk = client_socket.recv(MAX_FILE_SIZE)
+                                if not chunk or chunk == end_of_message_indicator:
+                                    break
+                                response += chunk
+                                print("Server response:", response.decode('utf-8'))
+
                             print("Server response:", response.decode('utf-8'))
                             response_text = response.decode('utf-8')
                             lines = response_text.split('\n')
@@ -230,7 +247,15 @@ def register_thread(external_ip):
                                 print("GET "+ txt_line)
                                 commnd_file = "GET "+ txt_line
                                 client_socket.send(commnd_file.encode('utf-8'))
-                                response = client_socket.recv(MAX_FILE_SIZE)
+                                response = b""  # Initialize an empty bytes object to hold the complete response
+
+                                while True:
+                                    chunk = client_socket.recv(MAX_FILE_SIZE)
+                                    if not chunk or chunk == end_of_message_indicator:
+                                        break
+                                    response += chunk
+                                    print("Server response:", response.decode('utf-8'))
+
                                 response_text = response.decode('utf-8')
 
                                 print(response_text)
