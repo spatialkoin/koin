@@ -31,7 +31,7 @@ def main():
 
             while True:
                 chunk = client_socket.recv(MAX_FILE_SIZE)
-                if not chunk or chunk.decode('utf-8') == end_of_message_indicator.decode('utf-8'):
+                if not chunk or chunk == end_of_message_indicator:
                     break
                 response += chunk
                 #print("Server response:", response.decode('utf-8'))
