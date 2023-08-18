@@ -20,3 +20,9 @@ Spatial Koin is a cutting-edge and experimental concept that merges the principl
 Whether you're an experienced developer, a curious researcher, or an individual intrigued by the possibilities of location-aware currencies, this repository offers the perfect platform to share ideas, exchange insights, and collectively expand the boundaries of conventional monetary concepts. By participating, you're actively contributing to the evolution of currency in a world that is becoming increasingly interconnected.
 
 **Become a Part of the Future of Finance with Spatial Koin!**
+
+
+add constants.py which will have your api key for openai
+
+constants.py
+APIKEY = "REPLACE_WITH_YOUR_OPENAI_API_KEY"
