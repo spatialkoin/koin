@@ -112,6 +112,8 @@ def handle_client(client_socket):
 
 
             print(f"Received command: '{command}'")
+            if command == "BREAK":
+                break
             if command == "GET":
                 file_name = files + rest[0]
                 if os.path.exists(file_name):
