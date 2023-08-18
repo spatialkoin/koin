@@ -205,7 +205,7 @@ def register_thread(external_ip):
                         server_port = 12345      # Replace with the server's port number
 
                         client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
+                        client_socket.settimeout(5) 
                         try:
                             client_socket.connect((server_ip, server_port))
                             print(f"Connected to {server_ip}:{server_port}")
