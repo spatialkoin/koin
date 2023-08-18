@@ -23,6 +23,11 @@ Whether you're an experienced developer, a curious researcher, or an individual 
 
 pip install langchain
 pip install openai
+pip install unstructured
+pip install chromadb
+Debian
+pip install chromadb==0.3.29
+pip install tiktoken
 
 add constants.py which will have your api key for openai
 
