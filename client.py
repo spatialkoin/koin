@@ -5,7 +5,7 @@ import time
 
 MAX_FILE_SIZE = 1024 * 1024
 
-end_of_message_indicator = b'\r'
+end_of_message_indicator = b'\r KOINSTOP \r'
 
 def main():
     if len(sys.argv) != 2:
@@ -31,7 +31,8 @@ def main():
 
             while True:
                 chunk = client_socket.recv(MAX_FILE_SIZE)
-                if not chunk or chunk == end_of_message_indicator:
+                print(chunk)
+                if not chunk or chunk.endswith(end_of_message_indicator):
                     break
                 response += chunk
                 #print("Server response:", response.decode('utf-8'))
