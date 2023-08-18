@@ -21,6 +21,8 @@ Whether you're an experienced developer, a curious researcher, or an individual 
 
 **Become a Part of the Future of Finance with Spatial Koin!**
 
+pip install langchain
+pip install openai
 
 add constants.py which will have your api key for openai
 
