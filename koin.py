@@ -128,7 +128,8 @@ def handle_client(client_socket):
                 response = "IP list:\n" + file_list
             elif command == "LIST":
                 print("Executing LIST branch")
-                file_list = "\n".join(os.listdir(files))
+                txt_files = [file for file in os.listdir(files) if file.endswith(".txt")]
+                file_list = "\n".join(txt_files)
                 response = "File list:\n" + file_list
             elif command == "SEARCH":
                 # Initialize the DocumentIndex with the existing index data
@@ -205,7 +206,7 @@ def register_thread(external_ip):
                         server_port = 12345      # Replace with the server's port number
 
                         client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                        client_socket.settimeout(5) 
+                        client_socket.settimeout(5)
                         try:
                             client_socket.connect((server_ip, server_port))
                             print(f"Connected to {server_ip}:{server_port}")
