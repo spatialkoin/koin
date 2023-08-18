@@ -213,10 +213,14 @@ def register_thread(external_ip):
 
                             while True:
                                 chunk = client_socket.recv(MAX_FILE_SIZE)
-                                if not chunk or chunk == end_of_message_indicator:
-                                    break
+                                #print(chunk)
                                 response += chunk
-                                print("Server response:", response.decode('utf-8'))
+
+                                if response.endswith(end_of_message_indicator):
+                                    response = response[:-len(end_of_message_indicator)]  # Remove the indicator
+
+                                if not chunk or chunk.endswith(end_of_message_indicator):
+                                    break
 
                             print("Server response:", response.decode('utf-8'))
                             response_text = response.decode('utf-8')
@@ -236,10 +240,14 @@ def register_thread(external_ip):
 
                             while True:
                                 chunk = client_socket.recv(MAX_FILE_SIZE)
-                                if not chunk or chunk == end_of_message_indicator:
-                                    break
+                                #print(chunk)
                                 response += chunk
-                                print("Server response:", response.decode('utf-8'))
+
+                                if response.endswith(end_of_message_indicator):
+                                    response = response[:-len(end_of_message_indicator)]  # Remove the indicator
+
+                                if not chunk or chunk.endswith(end_of_message_indicator):
+                                    break
 
                             print("Server response:", response.decode('utf-8'))
                             response_text = response.decode('utf-8')
@@ -255,10 +263,15 @@ def register_thread(external_ip):
 
                                 while True:
                                     chunk = client_socket.recv(MAX_FILE_SIZE)
-                                    if not chunk or chunk == end_of_message_indicator:
-                                        break
+                                    #print(chunk)
                                     response += chunk
-                                    print("Server response:", response.decode('utf-8'))
+
+                                    if response.endswith(end_of_message_indicator):
+                                        response = response[:-len(end_of_message_indicator)]  # Remove the indicator
+
+                                    if not chunk or chunk.endswith(end_of_message_indicator):
+                                        break
+
 
                                 response_text = response.decode('utf-8')
 

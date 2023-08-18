@@ -31,10 +31,14 @@ def main():
 
             while True:
                 chunk = client_socket.recv(MAX_FILE_SIZE)
-                print(chunk)
+                #print(chunk)
+                response += chunk
+
+                if response.endswith(end_of_message_indicator):
+                    response = response[:-len(end_of_message_indicator)]  # Remove the indicator
+
                 if not chunk or chunk.endswith(end_of_message_indicator):
                     break
-                response += chunk
                 #print("Server response:", response.decode('utf-8'))
 
             print("Server response:", response.decode('utf-8'))
