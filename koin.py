@@ -112,7 +112,7 @@ def handle_client(client_socket):
 
 
             print(f"Received command: '{command}'")
-            if command == "BREAK":
+            if command == "STOP":
                 break
             if command == "GET":
                 file_name = files + rest[0]
@@ -300,6 +300,10 @@ def register_thread(external_ip):
                                         response = f"File with name '{file_name}' already exists. Data not saved.\n"
 
                                     print(response)
+
+
+                            user_input = "STOP"
+                            client_socket.send(user_input.encode('utf-8'))
 
                         except Exception as e:
                             print("Error:", e)
