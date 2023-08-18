@@ -34,6 +34,8 @@ document_index = '../document_index.pkl'
 
 end_of_message_indicator = b'\r KOINSTOP \r'
 
+os.environ["OPENAI_API_KEY"] = constants.APIKEY
+
 class DocumentIndex:
     def __init__(self, index_file_path, model_directory):
         self.index_file_path = index_file_path
@@ -71,6 +73,14 @@ class DocumentIndex:
         pattern = re.compile(escaped_search_string, re.IGNORECASE)
         match = re.search(pattern, model_content)
         return match is not None
+
+
+def index_for_chatgpt():
+    while True:
+        print("chat index")
+        loader = DirectoryLoader(files)
+        index = VectorstoreIndexCreator(vectorstore_kwargs={"persist_directory":"../persist"}).from_loaders([loader])
+        time.sleep(15)
 
 
 def index_for_search():
@@ -166,7 +176,17 @@ def handle_client(client_socket):
                     response = "\n".join(matching_filenames)
                 else:
                     response = "No matching content found."
+            elif command == "CHAT":
+                chat_history = []
+                vectorstore = Chroma(persist_directory="../persist", embedding_function=OpenAIEmbeddings())
+                index = VectorStoreIndexWrapper(vectorstore=vectorstore)
+                chain = ConversationalRetrievalChain.from_llm(
+                  llm=ChatOpenAI(model="gpt-3.5-turbo"),
+                  retriever=index.vectorstore.as_retriever(search_kwargs={"k": 1}),
+                )
 
+                result = chain({"question": rest[0], "chat_history": chat_history})
+                response = f"RESPONSE: {result['answer']}\n"
             else:
                 file_hash = hashlib.sha256(decoded_data.encode('utf-8')).hexdigest()
                 file_name = file_hash + ".txt"
@@ -382,9 +402,11 @@ def main():
     register_thread_handler = threading.Thread(target=register_thread, args=(external_ip,))
     register_thread_handler.start()
 
-
     index_for_search_thread_handler = threading.Thread(target=index_for_search)
     index_for_search_thread_handler.start()
+
+    index_for_chatgpt_thread_handler = threading.Thread(target=index_for_chatgpt)
+    index_for_chatgpt_thread_handler.start()
 
     while True:
         client_socket, client_address = server_socket.accept()
