@@ -158,6 +158,8 @@ def handle_client(client_socket):
                 response = f"Data saved to file with hash as name: {file_name}, IP address registered.\n"
 
             print("TEST 0")
+            response_size_mb = len(response_bytes) / (1024 * 1024)  # Convert bytes to megabytes
+            print("Response size:", response_size_mb, "MB")  # Print the size in megabytes            
             client_socket.send(response.encode('utf-8'))
             print("TEST 1")
             client_socket.send(end_of_message_indicator)
