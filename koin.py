@@ -17,7 +17,7 @@ register = "../register/"
 files = "../files/"
 document_index = '../document_index.pkl'
 
-end_of_message_indicator = b'END\r\r\r\r\r'
+end_of_message_indicator = b'END\r\r\r\r\r'.encode('utf-8')
 
 class DocumentIndex:
     def __init__(self, index_file_path, model_directory):
@@ -150,7 +150,6 @@ def handle_client(client_socket):
                     response = "No matching content found."
 
             else:
-
                 file_hash = hashlib.sha256(decoded_data.encode('utf-8')).hexdigest()
                 file_name = file_hash + ".txt"
                 path_file_name = files + file_name

@@ -5,7 +5,7 @@ import time
 
 MAX_FILE_SIZE = 1024 * 1024
 
-end_of_message_indicator = b"END\r\r\r\r\r"
+end_of_message_indicator = b'END\r\r\r\r\r'.encode('utf-8')
 
 def main():
     if len(sys.argv) != 2:
