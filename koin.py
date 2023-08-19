@@ -75,15 +75,6 @@ class DocumentIndex:
         return match is not None
 
 
-def index_for_chatgpt():
-    try:
-        while True:
-            print("chat index")
-            loader = DirectoryLoader(files)
-            index = VectorstoreIndexCreator(vectorstore_kwargs={"persist_directory":"../persist"}).from_loaders([loader])
-            time.sleep(15)
-    except Exception as e:
-        print("Error:", e)
 
 def index_for_search():
     while True:
@@ -181,18 +172,7 @@ def handle_client(client_socket):
                     response = "No matching content found."
             elif command == "CHAT":
                 chat_history = []
-                loader = DirectoryLoader(files)
-                index = VectorstoreIndexCreator().from_loaders([loader])
-
-                #vectorstore = Chroma(persist_directory="../persist", embedding_function=OpenAIEmbeddings())
-                #index = VectorStoreIndexWrapper(vectorstore=vectorstore)
-
-                chain = ConversationalRetrievalChain.from_llm(
-                  llm=ChatOpenAI(model="gpt-3.5-turbo"),
-                  retriever=index.vectorstore.as_retriever(search_kwargs={"k": 1}),
-                )
-                result = chain({"question": rest[0], "chat_history": chat_history})
-                response = f"RESPONSE: {result['answer']}\n"
+                response = f"RESPONSE: CHAT DISABLED\n"
             else:
                 file_hash = hashlib.sha256(decoded_data.encode('utf-8')).hexdigest()
                 file_name = file_hash + ".txt"
@@ -411,8 +391,6 @@ def main():
     index_for_search_thread_handler = threading.Thread(target=index_for_search)
     index_for_search_thread_handler.start()
 
-    #index_for_chatgpt_thread_handler = threading.Thread(target=index_for_chatgpt)
-    #index_for_chatgpt_thread_handler.start()
 
     while True:
         client_socket, client_address = server_socket.accept()
