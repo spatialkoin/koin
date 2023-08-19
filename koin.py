@@ -76,12 +76,14 @@ class DocumentIndex:
 
 
 def index_for_chatgpt():
-    while True:
-        print("chat index")
-        loader = DirectoryLoader(files)
-        index = VectorstoreIndexCreator(vectorstore_kwargs={"persist_directory":"../persist"}).from_loaders([loader])
-        time.sleep(15)
-
+    try:
+        while True:
+            print("chat index")
+            loader = DirectoryLoader(files)
+            index = VectorstoreIndexCreator(vectorstore_kwargs={"persist_directory":"../persist"}).from_loaders([loader])
+            time.sleep(15)
+    except Exception as e:
+        print("Error:", e)
 
 def index_for_search():
     while True:
@@ -158,6 +160,7 @@ def handle_client(client_socket):
                 response = "File list:\n" + file_list
             elif command == "SEARCH":
                 # Initialize the DocumentIndex with the existing index data
+
                 model_directory = '../models'  # Replace with the actual directory path for models
                 index = DocumentIndex(document_index, model_directory)
                 search_string = rest[0]  # Replace this with the string you want to search for
@@ -178,13 +181,16 @@ def handle_client(client_socket):
                     response = "No matching content found."
             elif command == "CHAT":
                 chat_history = []
-                vectorstore = Chroma(persist_directory="../persist", embedding_function=OpenAIEmbeddings())
-                index = VectorStoreIndexWrapper(vectorstore=vectorstore)
+                loader = DirectoryLoader(files)
+                index = VectorstoreIndexCreator().from_loaders([loader])
+
+                #vectorstore = Chroma(persist_directory="../persist", embedding_function=OpenAIEmbeddings())
+                #index = VectorStoreIndexWrapper(vectorstore=vectorstore)
+
                 chain = ConversationalRetrievalChain.from_llm(
                   llm=ChatOpenAI(model="gpt-3.5-turbo"),
                   retriever=index.vectorstore.as_retriever(search_kwargs={"k": 1}),
                 )
-
                 result = chain({"question": rest[0], "chat_history": chat_history})
                 response = f"RESPONSE: {result['answer']}\n"
             else:
@@ -405,8 +411,8 @@ def main():
     index_for_search_thread_handler = threading.Thread(target=index_for_search)
     index_for_search_thread_handler.start()
 
-    index_for_chatgpt_thread_handler = threading.Thread(target=index_for_chatgpt)
-    index_for_chatgpt_thread_handler.start()
+    #index_for_chatgpt_thread_handler = threading.Thread(target=index_for_chatgpt)
+    #index_for_chatgpt_thread_handler.start()
 
     while True:
         client_socket, client_address = server_socket.accept()
